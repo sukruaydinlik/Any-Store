@@ -1,13 +1,16 @@
 package com.any.store.model;
 
 public class List {
+
 	private int id;
 	private String name;
 
-	public List(int id, String name) {
-		super();
-		this.id = id;
-		this.name = name;
+	@Override
+	public String toString() {
+		return "List [id=" + id + ", name=" + name + "]";
+	}
+	public void printClass() {
+		System.out.println(toString());
 	}
 
 	public List(String name) {
@@ -15,9 +18,10 @@ public class List {
 		this.name = name;
 	}
 
-	@Override
-	public String toString() {
-		return "Table [id=" + id + ", name=" + name + "]";
+	public List(int id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
 	}
 
 	public int getId() {

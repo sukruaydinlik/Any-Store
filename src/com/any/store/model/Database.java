@@ -22,7 +22,6 @@ public class Database {
 
 	public Database() {
 		try {
-			url = "jdbc:sqlite:databaseFile.db";
 			con = DriverManager.getConnection(url);
 			this.isConnected = true;
 		} catch (SQLException e) {
@@ -54,11 +53,12 @@ public class Database {
 	}
 
 	public ArrayList<Item> loadItems() throws SQLException {
+		items.clear();
+
 		int id;
 		int attId;
 		String value;
-
-		items.clear();
+		int itemId;
 
 		prepStat = con.prepareStatement("select * from item");
 
@@ -68,18 +68,18 @@ public class Database {
 			id = rs.getInt("id");
 			attId = rs.getInt("att_id");
 			value = rs.getString("value");
-
-			Item item = new Item(id, attId, value);
+			itemId = rs.getInt("item_id");
+			Item item = new Item(id, attId, value, itemId);
 			items.add(item);
 		}
 		return items;
 	}
 
 	public ArrayList<List> loadLists() throws SQLException {
+		lists.clear();
+
 		int id;
 		String name;
-
-		lists.clear();
 
 		prepStat = con.prepareStatement("select * from list");
 
@@ -96,11 +96,11 @@ public class Database {
 	}
 
 	public ArrayList<Attribute> loadAttributes() throws SQLException {
-		int id;
-		int tableId;
-		String name;
-
 		attributes.clear();
+
+		int id;
+		int listId;
+		String name;
 
 		prepStat = con.prepareStatement("select * from attribute");
 
@@ -108,36 +108,46 @@ public class Database {
 
 		while (rs.next()) {
 			id = rs.getInt("id");
-			tableId = rs.getInt("table_id");
+			listId = rs.getInt("list_id");
 			name = rs.getString("name");
 
-			Attribute att = new Attribute(id, tableId, name);
+			Attribute att = new Attribute(id, listId, name);
 			attributes.add(att);
 		}
 		return attributes;
 	}
 
-	public void insertItem(Item item) {
+	public void insertItem(int attId, String value, int itemId) throws SQLException {
+		prepStat = con.prepareStatement("insert into item(att_id,value,item_id) values(?,?,?)");
+		prepStat.setInt(1, attId);
+		prepStat.setString(2, value);
+		prepStat.setInt(3, itemId);
+		prepStat.executeUpdate();
+		
+	}
+
+	public void insertList(String name) throws SQLException {
+		prepStat = con.prepareStatement("insert into list(name) values(?)");
+		prepStat.setString(1, name);
+		prepStat.executeUpdate();
 
 	}
 
-	public void insertList(List list) {
-
-	}
-
-	public void insertAttribute(Attribute att) {
-
+	public void insertAttribute(int listId, String name) throws SQLException {
+		prepStat = con.prepareStatement("insert into attribute(list_id,name) values(?,?)");
+		prepStat.setInt(1, listId);
+		prepStat.setString(2, name);
+		prepStat.executeUpdate();
 	}
 
 	public ArrayList<List> searchList(String listName) throws SQLException {
+		lists.clear();
+
 		int id;
 		String name;
-
-		lists.clear();
 
 		prepStat = con.prepareStatement("select * from list where name = ?");
 		prepStat.setString(1, listName);
-
 		rs = prepStat.executeQuery();
 
 		while (rs.next()) {
@@ -147,51 +157,52 @@ public class Database {
 			List list = new List(id, name);
 			lists.add(list);
 		}
-		return lists;
+		return lists;	}
 
-	}
+	public ArrayList<Item> searchItem(int sattId) throws SQLException {
+		items.clear();
 
-	public ArrayList<List> searchItem(int attId) throws SQLException {
 		int id;
-		String name;
+		int attId;
+		String value;
+		int itemId;
 
-		lists.clear();
-
-		prepStat = con.prepareStatement("select * from item where att_id = ?");
-		prepStat.setInt(1, attId);
-
+		prepStat = con.prepareStatement("select * from item where att_id =?");
+		prepStat.setInt(1, sattId);
 		rs = prepStat.executeQuery();
 
 		while (rs.next()) {
 			id = rs.getInt("id");
-			name = rs.getString("name");
-
-			List list = new List(id, name);
-			lists.add(list);
+			attId = rs.getInt("att_id");
+			value = rs.getString("value");
+			itemId = rs.getInt("item_id");
+			Item item = new Item(id, attId, value, itemId);
+			items.add(item);
 		}
-		return lists;
 
+		return items;
 	}
 
-	public ArrayList<Attribute> searchAttribute(int listId) throws SQLException {
-		int id;
-		int tableId;
-		String name;
-
+	public ArrayList<Attribute> searchAttribute(int idOfList) throws SQLException {
 		attributes.clear();
+		
+		int id;
+		int listId;
+		String name;
 
 		prepStat = con.prepareStatement("select * from attribute where list_id = ?");
-		prepStat.setInt(1, listId);
+		prepStat.setInt(1, idOfList);
 		rs = prepStat.executeQuery();
 
 		while (rs.next()) {
 			id = rs.getInt("id");
-			tableId = rs.getInt("table_id");
+			listId = rs.getInt("list_id");
 			name = rs.getString("name");
 
-			Attribute att = new Attribute(id, tableId, name);
+			Attribute att = new Attribute(id, listId, name);
 			attributes.add(att);
 		}
 		return attributes;
 	}
+
 }

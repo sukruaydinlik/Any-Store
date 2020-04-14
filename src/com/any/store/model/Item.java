@@ -1,27 +1,33 @@
 package com.any.store.model;
 
 public class Item {
-	
+
 	private int id;
 	private int attId;
 	private String value;
-	
+	private int itemId;
+
 	@Override
 	public String toString() {
-		return "Item [id=" + id + ", attId=" + attId + ", value=" + value + "]";
+		return "Item [id=" + id + ", attId=" + attId + ", value=" + value + ", itemId=" + itemId + "]";
+	}
+	public void printClass() {
+		System.out.println(toString());
 	}
 
-	public Item(int id, int attId, String value) {
+	public Item(int attId, String value, int itemId) {
+		super();
+		this.attId = attId;
+		this.value = value;
+		this.itemId = itemId;
+	}
+
+	public Item(int id, int attId, String value, int itemId) {
 		super();
 		this.id = id;
 		this.attId = attId;
 		this.value = value;
-	}
-	
-	public Item(int attId, String value) {
-		super();
-		this.attId = attId;
-		this.value = value;
+		this.itemId = itemId;
 	}
 
 	public int getId() {
@@ -48,7 +54,12 @@ public class Item {
 		this.value = value;
 	}
 
-	
-	
-	
+	public int getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(int itemId) {
+		this.itemId = itemId;
+	}
+
 }
