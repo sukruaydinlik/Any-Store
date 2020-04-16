@@ -39,18 +39,30 @@ public class TestDatabase {
 
 		atts = db.searchAttribute(1);
 		for (int i = 0; i < atts.size(); i++) {
-			atts.get(i).printClass();
+			atts.get(i).print();
 		}
 		lists = db.searchList("kitap");
 
 		for (int i = 0; i < lists.size(); i++) {
-			lists.get(i).printClass();
+			lists.get(i).print();
 		}
 		items = db.searchItem(2);
 
 		for (int i = 0; i < items.size(); i++) {
-			items.get(i).printClass();
+			items.get(i).print();
 		}
+		System.out.println();
+		items.clear();
+		items = db.getRow(2);
+		for (int i = 0; i < items.size(); i++) {
+			items.get(i).print();
+		}
+		System.out.println();
+
+		
+		ArrayList<Integer> result = db.searchItemIds(2);
+		for (int i = 0; i < result.size(); i++) {
+System.out.println(result.get(i));		}
 
 	}
 }

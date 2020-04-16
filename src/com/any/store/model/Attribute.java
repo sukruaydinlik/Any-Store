@@ -11,7 +11,7 @@ public class Attribute {
 		return "Attribute [id=" + id + ", listId=" + listId + ", name=" + name + "]";
 	}
 	
-	public void printClass() {
+	public void print() {
 		System.out.println(toString());
 	}
 	public Attribute(int listId, String name) {

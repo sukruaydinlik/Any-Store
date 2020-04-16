@@ -11,7 +11,7 @@ public class Item {
 	public String toString() {
 		return "Item [id=" + id + ", attId=" + attId + ", value=" + value + ", itemId=" + itemId + "]";
 	}
-	public void printClass() {
+	public void print() {
 		System.out.println(toString());
 	}
 

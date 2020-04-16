@@ -9,7 +9,7 @@ public class List {
 	public String toString() {
 		return "List [id=" + id + ", name=" + name + "]";
 	}
-	public void printClass() {
+	public void print() {
 		System.out.println(toString());
 	}
 

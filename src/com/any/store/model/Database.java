@@ -123,7 +123,7 @@ public class Database {
 		prepStat.setString(2, value);
 		prepStat.setInt(3, itemId);
 		prepStat.executeUpdate();
-		
+
 	}
 
 	public void insertList(String name) throws SQLException {
@@ -157,7 +157,8 @@ public class Database {
 			List list = new List(id, name);
 			lists.add(list);
 		}
-		return lists;	}
+		return lists;
+	}
 
 	public ArrayList<Item> searchItem(int sattId) throws SQLException {
 		items.clear();
@@ -167,8 +168,10 @@ public class Database {
 		String value;
 		int itemId;
 
-		prepStat = con.prepareStatement("select * from item where att_id =?");
+		prepStat = con.prepareStatement("select * from item where att_id =? group by item_id");
 		prepStat.setInt(1, sattId);
+//		prepStat.setInt(2, sItemId);
+
 		rs = prepStat.executeQuery();
 
 		while (rs.next()) {
@@ -185,7 +188,7 @@ public class Database {
 
 	public ArrayList<Attribute> searchAttribute(int idOfList) throws SQLException {
 		attributes.clear();
-		
+
 		int id;
 		int listId;
 		String name;
@@ -205,4 +208,43 @@ public class Database {
 		return attributes;
 	}
 
+	public ArrayList<Item> getRow(int sItemId) throws SQLException {
+		items.clear();
+
+		int id;
+		int attId;
+		String value;
+		int itemId;
+
+		prepStat = con.prepareStatement("select * from item where item_id =?");
+		prepStat.setInt(1, sItemId);
+		rs = prepStat.executeQuery();
+
+		while (rs.next()) {
+			id = rs.getInt("id");
+			attId = rs.getInt("att_id");
+			value = rs.getString("value");
+			itemId = rs.getInt("item_id");
+			Item item = new Item(id, attId, value, itemId);
+			items.add(item);
+		}
+
+		return items;
+
+	}
+
+	public ArrayList<Integer> searchItemIds(int attId) throws SQLException {
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		int itemId;
+
+		prepStat = con.prepareStatement("select item_id from item where att_id = ? group by item_id order by item_id asc");
+		prepStat.setInt(1, attId);
+		rs = prepStat.executeQuery();
+
+		while (rs.next()) {
+			itemId = rs.getInt("item_id");
+			result.add(itemId);
+		}
+		return result;
+	}
 }
