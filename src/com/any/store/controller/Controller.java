@@ -78,4 +78,23 @@ public class Controller {
 		return result;
 	}
 
+	public ArrayList<String> getAttributes() {
+		ArrayList<String> result = new ArrayList<String>();
+		try {
+			for (int i = 0; i < db.loadAttributes().size(); i++) {
+				result.add(db.loadAttributes().get(i).getName());
+
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+
+	}
+
+	public void addItem(ArrayList<String> data) {
+		
+		// TODO Auto-generated method stub
+		
+	}
 }

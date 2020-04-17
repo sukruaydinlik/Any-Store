@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.any.store.gui;
 
 import java.awt.BorderLayout;
@@ -38,7 +33,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
-import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -49,12 +43,13 @@ import com.any.store.controller.Controller;
 public class MainFrame extends JFrame {
 
 	private static final long serialVersionUID = -1583374613377445225L;
-
-	private JButton addItemButton;
-	private JButton addListButton;
-	private JButton deleteItemButton;
-	private JButton deleteListButton;
-	private JButton editItemButton;
+	
+	private ItemFrame itemFrame;
+	private JButton addItemBtn;
+	private JButton addListBtn;
+	private JButton deleteItemBtn;
+	private JButton deleteListBtn;
+	private JButton editItemBtn;
 	private JButton editListButton;
 	private JPanel instrumentPanel;
 	private JScrollPane jScrollPane2;
@@ -63,13 +58,15 @@ public class MainFrame extends JFrame {
 	private JTable mainTable;
 	private JPanel menuPanel;
 	private JLabel mottoLabel;
-	private JButton searchButton;
+	private JButton searchBtn;
 	private JTextField searchField;
 	private JPanel tablePanel;
 	private JScrollPane tableScrollPane;
 	private DefaultTableModel tableModel;
 	private Controller cnt;
-
+	private String[] list;
+	private String selectedList;
+	
 	public MainFrame() {
 		initComponents();
 	}
@@ -79,14 +76,14 @@ public class MainFrame extends JFrame {
 
 		cnt = new Controller();
 		menuPanel = new JPanel();
-		searchButton = new JButton();
+		searchBtn = new JButton();
 		searchField = new JTextField();
-		addItemButton = new JButton();
-		addListButton = new JButton();
-		editItemButton = new JButton();
+		addItemBtn = new JButton();
+		addListBtn = new JButton();
+		editItemBtn = new JButton();
 		editListButton = new JButton();
-		deleteItemButton = new JButton();
-		deleteListButton = new JButton();
+		deleteItemBtn = new JButton();
+		deleteListBtn = new JButton();
 		instrumentPanel = new JPanel();
 		logoLabel = new JLabel();
 		mottoLabel = new JLabel();
@@ -95,27 +92,34 @@ public class MainFrame extends JFrame {
 		tablePanel = new JPanel();
 		tableScrollPane = new JScrollPane();
 		mainTable = new JTable();
-
+		list = cnt.getList();
+		selectedList = "";
+		
+		// setting frame
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setTitle("Any Store - Store anything");
 		setBackground(new Color(1, 198, 83));
 		setBounds(new Rectangle(100, 100, 0, 0));
 
+		
+		// set menu panel
 		menuPanel.setBackground(new Color(99, 99, 99));
 		menuPanel.setForeground(new Color(99, 99, 99));
 		menuPanel.setPreferredSize(new Dimension(781, 50));
 
-		searchButton.setIcon(new ImageIcon(getClass().getResource("/com/any/store/icons/icons8_search_26px_1.png"))); // NOI18N
-		searchButton.setToolTipText("Search in collection");
-		searchButton.setContentAreaFilled(false);
-		searchButton.setFocusPainted(false);
-		searchButton.setPreferredSize(new Dimension(30, 30));
-		searchButton.addActionListener(new ActionListener() {
+		// set search button
+		searchBtn.setIcon(new ImageIcon(getClass().getResource("/com/any/store/icons/icons8_search_26px_1.png"))); // NOI18N
+		searchBtn.setToolTipText("Search in collection");
+		searchBtn.setContentAreaFilled(false);
+		searchBtn.setFocusPainted(false);
+		searchBtn.setPreferredSize(new Dimension(30, 30));
+		searchBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				searchButtonActionPerformed(evt);
 			}
 		});
 
+		// set search field
 		searchField.setText("jTextField1");
 		searchField.setBorder(new LineBorder(new Color(1, 198, 83), 2, true));
 		searchField.setFont(new Font("Segoe UI Semibold", 1, 14)); // NOI18N
@@ -138,91 +142,99 @@ public class MainFrame extends JFrame {
 				searchFieldKeyPressed(evt);
 			}
 		});
-
-		addItemButton.setIcon(new ImageIcon(getClass().getResource("/com/any/store/icons/icons8_add_file_26px.png"))); // NOI18N
-		addItemButton.setToolTipText("Add item");
-		addItemButton.setContentAreaFilled(false);
-		addItemButton.setFocusPainted(false);
-//        addItemButton.setBorder(null);
-		addItemButton.addActionListener(new ActionListener() {
+		
+		// set add item button
+		addItemBtn.setIcon(new ImageIcon(getClass().getResource("/com/any/store/icons/icons8_add_file_26px.png"))); // NOI18N
+		addItemBtn.setToolTipText("Add item");
+		addItemBtn.setContentAreaFilled(false);
+		addItemBtn.setFocusPainted(false);
+		//addItemButton.setBorder(null);
+		addItemBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				addItemButtonActionPerformed(evt);
 			}
 		});
-
-		addListButton
+		
+		// set add list button
+		addListBtn
 				.setIcon(new ImageIcon(getClass().getResource("/com/any/store/icons/icons8_add_property_26px_1.png"))); // NOI18N
-		addListButton.setToolTipText("Add list");
-		addListButton.setContentAreaFilled(false);
-		addListButton.setFocusPainted(false);
-//        addListButton.setBorder(null);
-		addListButton.addActionListener(new ActionListener() {
+		addListBtn.setToolTipText("Add list");
+		addListBtn.setContentAreaFilled(false);
+		addListBtn.setFocusPainted(false);
+		//addListButton.setBorder(null);
+		addListBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				addListButtonActionPerformed(evt);
 			}
 		});
-
-		editItemButton.setIcon(new ImageIcon(getClass().getResource("/com/any/store/icons/icons8_edit_file_26px.png"))); // NOI18N
-		editItemButton.setToolTipText("Edit item");
-		editItemButton.setContentAreaFilled(false);
-		editItemButton.setFocusPainted(false);
-//        editItemButton.setBorder(null);
-		editItemButton.addActionListener(new ActionListener() {
+		
+		// set edit item button
+		editItemBtn.setIcon(new ImageIcon(getClass().getResource("/com/any/store/icons/icons8_edit_file_26px.png"))); // NOI18N
+		editItemBtn.setToolTipText("Edit item");
+		editItemBtn.setContentAreaFilled(false);
+		editItemBtn.setFocusPainted(false);
+		//editItemButton.setBorder(null);
+		editItemBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				editItemButtonActionPerformed(evt);
 			}
 		});
 
+		// set edit list button
 		editListButton
 				.setIcon(new ImageIcon(getClass().getResource("/com/any/store/icons/icons8_edit_property_26px_2.png"))); // NOI18N
 		editListButton.setToolTipText("Edit list");
 		editListButton.setContentAreaFilled(false);
 		editListButton.setFocusPainted(false);
-//        editListButton.setBorder(null);
+		//editListButton.setBorder(null);
 		editListButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				editListButtonActionPerformed(evt);
 			}
 		});
 
-		deleteItemButton
+		// set delete item button
+		deleteItemBtn
 				.setIcon(new ImageIcon(getClass().getResource("/com/any/store/icons/icons8_delete_file_26px.png"))); // NOI18N
-		deleteItemButton.setToolTipText("Delete item");
-		deleteItemButton.setContentAreaFilled(false);
-		deleteItemButton.setFocusPainted(false);
-//        deleteItemButton.setBorder(null);
-		deleteItemButton.addActionListener(new ActionListener() {
+		deleteItemBtn.setToolTipText("Delete item");
+		deleteItemBtn.setContentAreaFilled(false);
+		deleteItemBtn.setFocusPainted(false);
+		//deleteItemButton.setBorder(null);
+		deleteItemBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				deleteItemButtonActionPerformed(evt);
 			}
 		});
 
-		deleteListButton.setIcon(
+		// set delete list button
+		deleteListBtn.setIcon(
 				new ImageIcon(getClass().getResource("/com/any/store/icons/icons8_delete_document_26px_2.png"))); // NOI18N
-		deleteListButton.setToolTipText("Delete list");
-		deleteListButton.setContentAreaFilled(false);
-		deleteListButton.setFocusPainted(false);
-//        deleteListButton.setBorder(null);
-		deleteListButton.addActionListener(new ActionListener() {
+		deleteListBtn.setToolTipText("Delete list");
+		deleteListBtn.setContentAreaFilled(false);
+		deleteListBtn.setFocusPainted(false);
+		//deleteListButton.setBorder(null);
+		deleteListBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				deleteListButtonActionPerformed(evt);
 			}
 		});
-
+		
+		
+		// layout menu panel
 		GroupLayout menuPanelLayout = new GroupLayout(menuPanel);
 		menuPanel.setLayout(menuPanelLayout);
 		menuPanelLayout.setHorizontalGroup(menuPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addGroup(menuPanelLayout.createSequentialGroup().addContainerGap().addComponent(addItemButton)
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(addListButton)
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(editItemButton)
+				.addGroup(menuPanelLayout.createSequentialGroup().addContainerGap().addComponent(addItemBtn)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(addListBtn)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(editItemBtn)
 						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(editListButton)
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(deleteItemButton)
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(deleteListButton)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(deleteItemBtn)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(deleteListBtn)
 						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,
 								Short.MAX_VALUE)
 						.addComponent(searchField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 								GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(searchButton,
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(searchBtn,
 								GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addContainerGap()));
 		menuPanelLayout.setVerticalGroup(menuPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -231,10 +243,10 @@ public class MainFrame extends JFrame {
 						.addGroup(menuPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 								.addComponent(searchField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 										GroupLayout.PREFERRED_SIZE)
-								.addComponent(addItemButton).addComponent(addListButton).addComponent(editItemButton)
-								.addComponent(editListButton).addComponent(deleteItemButton)
-								.addComponent(deleteListButton))
-						.addComponent(searchButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+								.addComponent(addItemBtn).addComponent(addListBtn).addComponent(editItemBtn)
+								.addComponent(editListButton).addComponent(deleteItemBtn)
+								.addComponent(deleteListBtn))
+						.addComponent(searchBtn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 								GroupLayout.PREFERRED_SIZE))
 						.addContainerGap(14, Short.MAX_VALUE)));
 
@@ -272,7 +284,7 @@ public class MainFrame extends JFrame {
 		listList.setFont(new Font("Segoe UI Semibold", 1, 14)); // NOI18N
 		listList.setForeground(new Color(69, 73, 74));
 		listList.setModel(new AbstractListModel<String>() {
-			String[] strings = cnt.getList();
+			String[] strings = list;
 
 			public int getSize() {
 				return strings.length;
@@ -383,7 +395,22 @@ public class MainFrame extends JFrame {
 	}
 
 	private void addItemButtonActionPerformed(ActionEvent evt) {
+		System.out.println("AddItemButton clicked");
+		listList.getSelectedValue();
+		setItemFrame();
+	}
 
+	private void setItemFrame() {
+		itemFrame = new ItemFrame(cnt.getAttributes(), listList.getSelectedValue());
+		itemFrame.setItemListener(new ItemListener() {
+			
+			@Override
+			public void eventOccured(ItemEvent ie) {
+				ie.getData(); // holds the data from ItemPanel
+				System.out.println("Save Button Clicked");
+				cnt.addItem(ie.getData());
+			}
+		});
 	}
 
 	private void searchFieldKeyPressed(KeyEvent evt) {

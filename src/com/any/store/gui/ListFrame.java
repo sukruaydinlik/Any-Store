@@ -8,8 +8,6 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractListModel;
 import javax.swing.GroupLayout;
@@ -21,14 +19,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 public class ListFrame extends JFrame {
+	
+	private static final long serialVersionUID = 3520834608783343621L;
 	
 	private JButton addPropButton;
 	private JButton deletePropButton;
@@ -70,6 +68,8 @@ public class ListFrame extends JFrame {
 		listList.setBorder(new LineBorder(new Color(187, 187, 187), 2, true));
 		listList.setFont(new Font("Segoe UI", 0, 14)); // NOI18N
 		listList.setModel(new AbstractListModel<String>() {
+			private static final long serialVersionUID = -1159974033691553100L;
+			
 			String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
 
 			public int getSize() {
@@ -201,23 +201,20 @@ public class ListFrame extends JFrame {
 	}
 
 	private void addPropButtonActionPerformed(ActionEvent evt) {
-		// GEN-FIRST:event_addPropButtonActionPerformed
-		// TODO add your handling code here:
+
+	
 	}
 
 	private void deletePropButtonActionPerformed(ActionEvent evt) {
-		// GEN-FIRST:event_deletePropButtonActionPerformed
-		// TODO add your handling code here:
+
 	}
 
 	private void listListValueChanged(ListSelectionEvent evt) {
-		// GEN-FIRST:event_listListValueChanged
-		// TODO add your handling code here:
+
 	}
 
 	private void saveButtonActionPerformed(ActionEvent evt) {
-		// GEN-FIRST:event_saveButtonActionPerformed
-		// TODO add your handling code here:
+
 	}
 
 	public static void main(String args[]) {
