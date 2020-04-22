@@ -226,7 +226,6 @@ public class ItemFrame extends JFrame {
 		gbc.insets = new Insets(0, 0, 20, 20);
 		itemPanel.add(saveButon, gbc);
 
-//		itemPanel.updateUI();
 	}
 
 	private void saveBtnActionPerformed() {

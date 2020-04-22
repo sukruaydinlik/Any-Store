@@ -2,7 +2,6 @@ package com.any.store.controller;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -28,9 +27,11 @@ public class Controller {
 		lists.clear();
 		items.clear();
 		colValues.clear();
+		
 		if (this.tableModel == null) {
 			this.tableModel = tableModel;
 		}
+		
 		System.out.println(tableModel == null);
 		tableModel.setRowCount(0);
 		tableModel.setColumnCount(0);

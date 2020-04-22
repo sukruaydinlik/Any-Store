@@ -185,7 +185,6 @@ public class Database {
 		PreparedStatement prepStat = con
 				.prepareStatement("select * from item where att_id =? group by item_id order by item_id asc");
 		prepStat.setInt(1, sattId);
-//		prepStat.setInt(2, sItemId);
 
 		ResultSet rs = prepStat.executeQuery();
 

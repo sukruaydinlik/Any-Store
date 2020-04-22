@@ -425,6 +425,7 @@ public class MainFrame extends JFrame {
 		}
 	}
 
+	
 	private void setItemFrame() throws SQLException {
 
 		itemFrame = new ItemFrame(cnt.findAttributes(selectedList), listList.getSelectedValue());

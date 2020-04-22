@@ -8,6 +8,7 @@ public class ItemEvent extends EventObject{
 	
 	private String listName;
 	private ArrayList<String> data;
+	
 	public ItemEvent(Object source, ArrayList<String> data, String listName) {
 		super(source);
 		this.listName = listName;
