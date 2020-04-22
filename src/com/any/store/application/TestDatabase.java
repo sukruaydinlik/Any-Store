@@ -18,20 +18,20 @@ public class TestDatabase {
 //		db.insertList("kalem");
 //		db.insertAttribute(4, "uç boyutu");
 //		db.insertItem(7, "0.7", 6);
-		items = db.loadItems();
+		items = db.readItems();
 
 		for (int i = 0; i < items.size(); i++) {
 			System.out.println(items.get(i).toString());
 		}
 		System.out.println();
 
-		atts = db.loadAttributes();
+		atts = db.readAttributes();
 		for (int i = 0; i < atts.size(); i++) {
 			System.out.println(atts.get(i).toString());
 		}
 		System.out.println();
 
-		lists = db.loadLists();
+		lists = db.readLists();
 		for (int i = 0; i < lists.size(); i++) {
 			System.out.println(lists.get(i).toString());
 		}
@@ -41,7 +41,7 @@ public class TestDatabase {
 		for (int i = 0; i < atts.size(); i++) {
 			atts.get(i).print();
 		}
-		lists = db.searchList("kitap");
+//		lists = db.searchList("kitap");
 
 		for (int i = 0; i < lists.size(); i++) {
 			lists.get(i).print();
@@ -51,6 +51,7 @@ public class TestDatabase {
 		for (int i = 0; i < items.size(); i++) {
 			items.get(i).print();
 		}
+		
 		System.out.println();
 		items.clear();
 		items = db.getRow(2);
@@ -63,6 +64,7 @@ public class TestDatabase {
 		ArrayList<Integer> result = db.searchItemIds(2);
 		for (int i = 0; i < result.size(); i++) {
 System.out.println(result.get(i));		}
+		System.out.println(db.readItemId());	
 
 	}
 }

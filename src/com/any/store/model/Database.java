@@ -15,8 +15,8 @@ public class Database {
 
 	private String url = "jdbc:sqlite:db.db";
 	private Connection con = null;
-	private PreparedStatement prepStat = null;
-	private ResultSet rs = null;
+//	private PreparedStatement prepStat = null;
+//	private ResultSet rs = null;
 
 	public boolean isConnected;
 
@@ -52,7 +52,7 @@ public class Database {
 		}
 	}
 
-	public ArrayList<Item> loadItems() throws SQLException {
+	public ArrayList<Item> readItems() throws SQLException {
 		items.clear();
 
 		int id;
@@ -60,9 +60,9 @@ public class Database {
 		String value;
 		int itemId;
 
-		prepStat = con.prepareStatement("select * from item");
+		PreparedStatement prepStat = con.prepareStatement("select * from item order by id asc");
 
-		rs = prepStat.executeQuery();
+		ResultSet rs = prepStat.executeQuery();
 
 		while (rs.next()) {
 			id = rs.getInt("id");
@@ -72,18 +72,21 @@ public class Database {
 			Item item = new Item(id, attId, value, itemId);
 			items.add(item);
 		}
+		prepStat.close();
+		rs.close();
+
 		return items;
 	}
 
-	public ArrayList<List> loadLists() throws SQLException {
+	public ArrayList<List> readLists() throws SQLException {
 		lists.clear();
 
 		int id;
 		String name;
 
-		prepStat = con.prepareStatement("select * from list");
+		PreparedStatement prepStat = con.prepareStatement("select * from list order by name asc");
 
-		rs = prepStat.executeQuery();
+		ResultSet rs = prepStat.executeQuery();
 
 		while (rs.next()) {
 			id = rs.getInt("id");
@@ -92,19 +95,22 @@ public class Database {
 			List list = new List(id, name);
 			lists.add(list);
 		}
+		prepStat.close();
+		rs.close();
+
 		return lists;
 	}
 
-	public ArrayList<Attribute> loadAttributes() throws SQLException {
+	public ArrayList<Attribute> readAttributes() throws SQLException {
 		attributes.clear();
 
 		int id;
 		int listId;
 		String name;
 
-		prepStat = con.prepareStatement("select * from attribute");
+		PreparedStatement prepStat = con.prepareStatement("select * from attribute order by id asc");
 
-		rs = prepStat.executeQuery();
+		ResultSet rs = prepStat.executeQuery();
 
 		while (rs.next()) {
 			id = rs.getInt("id");
@@ -114,50 +120,58 @@ public class Database {
 			Attribute att = new Attribute(id, listId, name);
 			attributes.add(att);
 		}
+		prepStat.close();
+		rs.close();
+
 		return attributes;
 	}
 
-	public void insertItem(int attId, String value, int itemId) throws SQLException {
-		prepStat = con.prepareStatement("insert into item(att_id,value,item_id) values(?,?,?)");
+	public void writeItem(int attId, String value, int itemId) throws SQLException {
+		PreparedStatement prepStat = con.prepareStatement("insert into item(att_id,value,item_id) values(?,?,?)");
 		prepStat.setInt(1, attId);
 		prepStat.setString(2, value);
 		prepStat.setInt(3, itemId);
 		prepStat.executeUpdate();
+		prepStat.close();
 
 	}
 
-	public void insertList(String name) throws SQLException {
-		prepStat = con.prepareStatement("insert into list(name) values(?)");
+	public void writeList(String name) throws SQLException {
+		PreparedStatement prepStat = con.prepareStatement("insert into list(name) values(?)");
 		prepStat.setString(1, name);
 		prepStat.executeUpdate();
+		prepStat.close();
 
 	}
 
-	public void insertAttribute(int listId, String name) throws SQLException {
-		prepStat = con.prepareStatement("insert into attribute(list_id,name) values(?,?)");
+	public void writeAttribute(int listId, String name) throws SQLException {
+		PreparedStatement prepStat = con.prepareStatement("insert into attribute(list_id,name) values(?,?)");
 		prepStat.setInt(1, listId);
 		prepStat.setString(2, name);
 		prepStat.executeUpdate();
+		prepStat.close();
 	}
 
-	public ArrayList<List> searchList(String listName) throws SQLException {
+	public int searchList(String listName) throws SQLException {
 		lists.clear();
-
-		int id;
-		String name;
-
-		prepStat = con.prepareStatement("select * from list where name = ?");
+		int id = 0;
+		PreparedStatement prepStat = con.prepareStatement("select id from list where name = ? order by id asc");
 		prepStat.setString(1, listName);
-		rs = prepStat.executeQuery();
+		ResultSet rs = prepStat.executeQuery();
+		if (!rs.next()) {
+			System.out.println("false");
+		} else {
+			do {
+				id = rs.getInt("id");
+				System.out.println("id is: " + id);
+			} while (rs.next());
 
-		while (rs.next()) {
-			id = rs.getInt("id");
-			name = rs.getString("name");
-
-			List list = new List(id, name);
-			lists.add(list);
 		}
-		return lists;
+		prepStat.close();
+		rs.close();
+
+		System.out.println("id:" + id);
+		return id;
 	}
 
 	public ArrayList<Item> searchItem(int sattId) throws SQLException {
@@ -168,11 +182,12 @@ public class Database {
 		String value;
 		int itemId;
 
-		prepStat = con.prepareStatement("select * from item where att_id =? group by item_id");
+		PreparedStatement prepStat = con
+				.prepareStatement("select * from item where att_id =? group by item_id order by item_id asc");
 		prepStat.setInt(1, sattId);
 //		prepStat.setInt(2, sItemId);
 
-		rs = prepStat.executeQuery();
+		ResultSet rs = prepStat.executeQuery();
 
 		while (rs.next()) {
 			id = rs.getInt("id");
@@ -182,6 +197,8 @@ public class Database {
 			Item item = new Item(id, attId, value, itemId);
 			items.add(item);
 		}
+		prepStat.close();
+		rs.close();
 
 		return items;
 	}
@@ -193,9 +210,9 @@ public class Database {
 		int listId;
 		String name;
 
-		prepStat = con.prepareStatement("select * from attribute where list_id = ?");
+		PreparedStatement prepStat = con.prepareStatement("select * from attribute where list_id = ? order by id asc");
 		prepStat.setInt(1, idOfList);
-		rs = prepStat.executeQuery();
+		ResultSet rs = prepStat.executeQuery();
 
 		while (rs.next()) {
 			id = rs.getInt("id");
@@ -205,6 +222,9 @@ public class Database {
 			Attribute att = new Attribute(id, listId, name);
 			attributes.add(att);
 		}
+		System.out.println(attributes.size());
+		prepStat.close();
+		rs.close();
 		return attributes;
 	}
 
@@ -216,9 +236,9 @@ public class Database {
 		String value;
 		int itemId;
 
-		prepStat = con.prepareStatement("select * from item where item_id =?");
+		PreparedStatement prepStat = con.prepareStatement("select * from item where item_id =?");
 		prepStat.setInt(1, sItemId);
-		rs = prepStat.executeQuery();
+		ResultSet rs = prepStat.executeQuery();
 
 		while (rs.next()) {
 			id = rs.getInt("id");
@@ -228,6 +248,8 @@ public class Database {
 			Item item = new Item(id, attId, value, itemId);
 			items.add(item);
 		}
+		prepStat.close();
+		rs.close();
 
 		return items;
 
@@ -237,14 +259,35 @@ public class Database {
 		ArrayList<Integer> result = new ArrayList<Integer>();
 		int itemId;
 
-		prepStat = con.prepareStatement("select item_id from item where att_id = ? group by item_id order by item_id asc");
+		PreparedStatement prepStat = con
+				.prepareStatement("select item_id from item where att_id = ? group by item_id order by item_id asc");
 		prepStat.setInt(1, attId);
-		rs = prepStat.executeQuery();
+		ResultSet rs = prepStat.executeQuery();
 
 		while (rs.next()) {
 			itemId = rs.getInt("item_id");
 			result.add(itemId);
 		}
+		prepStat.close();
+		rs.close();
 		return result;
+	}
+
+	public int readItemId() throws SQLException {
+		int itemId;
+		PreparedStatement prepStat = con.prepareStatement("select max(item_id) from item;");
+		ResultSet rs = prepStat.executeQuery();
+
+		if (!rs.next()) {
+			System.out.println("false");
+			return 0;
+		} else {
+			do {
+				itemId = rs.getInt("max(item_id)");
+				System.out.println("id is: " + itemId);
+			} while (rs.next());
+
+		}
+		return itemId;
 	}
 }
