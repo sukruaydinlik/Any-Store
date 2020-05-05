@@ -290,10 +290,11 @@ public class MainFrame extends JFrame {
 
             public void focusLost(FocusEvent evt) {
                 searchFieldFocusLost(evt);
+
             }
         });
         searchField.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent evt) {
+            public void keyReleased(KeyEvent evt) {
                 searchFieldKeyPressed(evt);
             }
         });
@@ -504,13 +505,19 @@ public class MainFrame extends JFrame {
     }
 
     private void searchFieldFocusGained(FocusEvent evt) {
-        searchField.setText("");
-        refresh();
+        if(searchField.getText().equals("search...")) {
+
+            searchField.setText("");
+            refresh();
+        }
     }
 
     private void searchFieldFocusLost(FocusEvent evt) {
-        searchField.setText("search...");
-        refresh();
+        if(searchField.getText().equals("")) {
+            searchField.setText("search...");
+            filterTable("");
+            refresh();
+        }
     }
 
     public void filterTable(String filter){
