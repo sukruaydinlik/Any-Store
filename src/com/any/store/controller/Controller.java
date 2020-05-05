@@ -15,8 +15,8 @@ public class Controller {
     private final Database db = new Database();
     private DefaultTableModel tableModel = null;
     private ArrayList<Attribute> atts = new ArrayList<Attribute>();
-    private ArrayList<List> lists = new ArrayList<List>();
-    private ArrayList<Item> items = new ArrayList<Item>();
+    private final ArrayList<List> lists = new ArrayList<List>();
+    private final ArrayList<Item> items = new ArrayList<Item>();
     ArrayList<String> colValues = new ArrayList<String>();
 
     // sets table data according to specific list
@@ -122,23 +122,20 @@ public class Controller {
     }
 
     public void editList(String listName, ArrayList<String> newAtts) {
+        atts.clear();
         atts = db.searchAttribute(listName);
-        boolean attAdded = false;
-        for (String str :
-                newAtts) {
-            System.out.println(str);
-        }
         ArrayList<String> olds = new ArrayList<>();
+
         for (int i = 0; i < atts.size(); i++) {
             olds.add(atts.get(i).getName());
         }
         //if already has, then delete it
-        for (int i = 0; i < newAtts.size(); i++) {
+        for (int i = 0; i < newAtts.size(); ) {
             if (!olds.contains(newAtts.get(i))) {
-                System.out.println("does not contain" + newAtts.get(i));
                 db.writeAttribute(listName, newAtts.get(i));
                 newAtts.remove(i);
-                attAdded = true;
+            }else{
+                i++;
             }
         }
         //if not in remaining, then delete

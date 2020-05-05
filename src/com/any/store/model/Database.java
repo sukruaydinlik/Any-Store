@@ -22,10 +22,12 @@ public class Database {
             this.isConnected = true;
         } catch (SQLException e) {
             this.isConnected = false;
+            e.printStackTrace();
         }
         if (isConnected) {
             System.out.println("Connection successfull!");
         } else {
+
             System.out.println("Connection error");
         }
 

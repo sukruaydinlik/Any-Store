@@ -7,6 +7,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public class MainFrame extends JFrame {
 
         // setting frame
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Any Store - Store anything");
+        setTitle("Any Store");
         setBackground(new Color(1, 198, 83));
         setBounds(new Rectangle(100, 100, 0, 0));
 
@@ -497,6 +498,8 @@ public class MainFrame extends JFrame {
 
 
     private void searchFieldKeyPressed(KeyEvent evt) {
+        String filter = searchField.getText();
+        filterTable(filter);
         refresh();
     }
 
@@ -510,6 +513,12 @@ public class MainFrame extends JFrame {
         refresh();
     }
 
+    public void filterTable(String filter){
+        TableRowSorter<DefaultTableModel> trs = new TableRowSorter<DefaultTableModel>(tableModel);
+        mainTable.setRowSorter(trs);
+        trs.setRowFilter(RowFilter.regexFilter("(?i)" + filter));
+    }
+
     public void refresh() {
         cnt.fillTable(listList.getSelectedValue(), tableModel, mainTable);
         mainTable.repaint();
@@ -519,5 +528,6 @@ public class MainFrame extends JFrame {
         listList.repaint();
         listList.revalidate();
     }
+
 }
 
