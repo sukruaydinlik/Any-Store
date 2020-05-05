@@ -1,292 +1,392 @@
 package com.any.store.model;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class Database {
 
-	public ArrayList<Item> items;
-	public ArrayList<List> lists;
-	public ArrayList<Attribute> attributes;
+    public ArrayList<Item> items;
+    public ArrayList<List> lists;
+    public ArrayList<Attribute> attributes;
 
-	private String url = "jdbc:sqlite:db.db";
-	private Connection con = null;
+    private String url = "jdbc:sqlite:db.db";
+    private Connection con = null;
 //	private PreparedStatement prepStat = null;
 //	private ResultSet rs = null;
 
-	public boolean isConnected;
+    public boolean isConnected;
 
-	public Database() {
-		try {
-			con = DriverManager.getConnection(url);
-			this.isConnected = true;
-		} catch (SQLException e) {
-			this.isConnected = false;
-		}
-		if (isConnected) {
-			System.out.println("Connection successfull!");
-		} else {
-			System.out.println("Connection error");
-		}
+    public Database() {
+        try {
+            con = DriverManager.getConnection(url);
+            this.isConnected = true;
+        } catch (SQLException e) {
+            this.isConnected = false;
+        }
+        if (isConnected) {
+            System.out.println("Connection successfull!");
+        } else {
+            System.out.println("Connection error");
+        }
 
-		initialize();
+        initialize();
 
-	}
+    }
 
-	private void initialize() {
-		items = new ArrayList<Item>();
-		lists = new ArrayList<List>();
-		attributes = new ArrayList<Attribute>();
-	}
+    private void initialize() {
+        items = new ArrayList<Item>();
+        lists = new ArrayList<List>();
+        attributes = new ArrayList<Attribute>();
+    }
 
-	public void disconnect() {
-		try {
-			con.close();
-			this.isConnected = false;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+    public void disconnect() {
+        try {
+            con.close();
+            this.isConnected = false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public ArrayList<Item> readItems() throws SQLException {
-		items.clear();
+    public ArrayList<Item> readItems() {
+        items.clear();
 
-		int id;
-		int attId;
-		String value;
-		int itemId;
+        int id;
+        int attId;
+        String value;
+        int itemId;
 
-		PreparedStatement prepStat = con.prepareStatement("select * from item order by id asc");
+        try {
+            PreparedStatement prepStat = con.prepareStatement("select * from item order by id asc");
 
-		ResultSet rs = prepStat.executeQuery();
+            ResultSet rs = prepStat.executeQuery();
 
-		while (rs.next()) {
-			id = rs.getInt("id");
-			attId = rs.getInt("att_id");
-			value = rs.getString("value");
-			itemId = rs.getInt("item_id");
-			Item item = new Item(id, attId, value, itemId);
-			items.add(item);
-		}
-		prepStat.close();
-		rs.close();
+            while (rs.next()) {
+                id = rs.getInt("id");
+                attId = rs.getInt("att_id");
+                value = rs.getString("value");
+                itemId = rs.getInt("item_id");
+                Item item = new Item(id, attId, value, itemId);
+                items.add(item);
+            }
+            prepStat.close();
+            rs.close();
 
-		return items;
-	}
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            return items;
+        }
+    }
 
-	public ArrayList<List> readLists() throws SQLException {
-		lists.clear();
+    public ArrayList<List> readLists() {
+        lists.clear();
 
-		int id;
-		String name;
+        int id;
+        String name;
 
-		PreparedStatement prepStat = con.prepareStatement("select * from list order by name asc");
+        try {
+            PreparedStatement prepStat = con.prepareStatement("select * from list order by name asc");
+            ResultSet rs = prepStat.executeQuery();
 
-		ResultSet rs = prepStat.executeQuery();
+            while (rs.next()) {
+                id = rs.getInt("id");
+                name = rs.getString("name");
 
-		while (rs.next()) {
-			id = rs.getInt("id");
-			name = rs.getString("name");
+                List list = new List(id, name);
+                lists.add(list);
+            }
+            prepStat.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            return lists;
+        }
+    }
 
-			List list = new List(id, name);
-			lists.add(list);
-		}
-		prepStat.close();
-		rs.close();
+    public ArrayList<Attribute> readAttributes() {
+        attributes.clear();
 
-		return lists;
-	}
+        int id;
+        int listId;
+        String name;
 
-	public ArrayList<Attribute> readAttributes() throws SQLException {
-		attributes.clear();
+        try {
+            PreparedStatement prepStat = con.prepareStatement("select * from attribute order by id asc");
+            ResultSet rs = prepStat.executeQuery();
 
-		int id;
-		int listId;
-		String name;
+            while (rs.next()) {
+                id = rs.getInt("id");
+                listId = rs.getInt("list_id");
+                name = rs.getString("name");
 
-		PreparedStatement prepStat = con.prepareStatement("select * from attribute order by id asc");
+                Attribute att = new Attribute(id, listId, name);
+                attributes.add(att);
+            }
+            prepStat.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            return attributes;
+        }
+    }
 
-		ResultSet rs = prepStat.executeQuery();
+    public void writeItem(int attId, String value, int itemId) {
+        try {
+            PreparedStatement prepStat = con.prepareStatement("insert into item(att_id,value,item_id) values(?,?,?)");
+            prepStat.setInt(1, attId);
+            prepStat.setString(2, value);
+            prepStat.setInt(3, itemId);
+            prepStat.executeUpdate();
+            prepStat.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
-		while (rs.next()) {
-			id = rs.getInt("id");
-			listId = rs.getInt("list_id");
-			name = rs.getString("name");
+    public void writeList(String name) {
+        try {
+            PreparedStatement prepStat = con.prepareStatement("insert into list(name) values(?)");
+            prepStat.setString(1, name);
+            prepStat.executeUpdate();
+            prepStat.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
-			Attribute att = new Attribute(id, listId, name);
-			attributes.add(att);
-		}
-		prepStat.close();
-		rs.close();
+    public void writeAttribute(String listName, String name) {
 
-		return attributes;
-	}
+        try {
+            int listId = searchList(listName);
+            if (listId != 0) {
+                // write attribute
+                PreparedStatement prepStat = con.prepareStatement("insert into attribute(list_id,name) values(?,?)");
+                prepStat.setInt(1, listId);
+                prepStat.setString(2, name);
+                prepStat.executeUpdate();
+                prepStat.close();
+                PreparedStatement prepStat2 = con.prepareStatement("insert into attribute(list_id,name) values(?,?)");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public void writeItem(int attId, String value, int itemId) throws SQLException {
-		PreparedStatement prepStat = con.prepareStatement("insert into item(att_id,value,item_id) values(?,?,?)");
-		prepStat.setInt(1, attId);
-		prepStat.setString(2, value);
-		prepStat.setInt(3, itemId);
-		prepStat.executeUpdate();
-		prepStat.close();
+    public int searchList(String listName) {
+        lists.clear();
+        int id = 0;
 
-	}
+        try {
+            PreparedStatement prepStat = con.prepareStatement("select id from list where name = ? order by id asc");
+            prepStat.setString(1, listName);
+            ResultSet rs = prepStat.executeQuery();
+            if (!rs.next()) {
+            } else {
+                do {
+                    id = rs.getInt("id");
+                } while (rs.next());
 
-	public void writeList(String name) throws SQLException {
-		PreparedStatement prepStat = con.prepareStatement("insert into list(name) values(?)");
-		prepStat.setString(1, name);
-		prepStat.executeUpdate();
-		prepStat.close();
+            }
+            prepStat.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
 
-	}
+    public ArrayList<Item> searchItem(int sattId) {
+        items.clear();
 
-	public void writeAttribute(int listId, String name) throws SQLException {
-		PreparedStatement prepStat = con.prepareStatement("insert into attribute(list_id,name) values(?,?)");
-		prepStat.setInt(1, listId);
-		prepStat.setString(2, name);
-		prepStat.executeUpdate();
-		prepStat.close();
-	}
+        int id;
+        int attId;
+        String value;
+        int itemId;
 
-	public int searchList(String listName) throws SQLException {
-		lists.clear();
-		int id = 0;
-		PreparedStatement prepStat = con.prepareStatement("select id from list where name = ? order by id asc");
-		prepStat.setString(1, listName);
-		ResultSet rs = prepStat.executeQuery();
-		if (!rs.next()) {
-			System.out.println("false");
-		} else {
-			do {
-				id = rs.getInt("id");
-				System.out.println("id is: " + id);
-			} while (rs.next());
+        try {
+            PreparedStatement prepStat = con
+                    .prepareStatement("select * from item where att_id =? group by item_id order by item_id asc");
+            prepStat.setInt(1, sattId);
 
-		}
-		prepStat.close();
-		rs.close();
+            ResultSet rs = prepStat.executeQuery();
 
-		System.out.println("id:" + id);
-		return id;
-	}
+            while (rs.next()) {
+                id = rs.getInt("id");
+                attId = rs.getInt("att_id");
+                value = rs.getString("value");
+                itemId = rs.getInt("item_id");
+                Item item = new Item(id, attId, value, itemId);
+                items.add(item);
+            }
+            prepStat.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
 
-	public ArrayList<Item> searchItem(int sattId) throws SQLException {
-		items.clear();
+    public ArrayList<Attribute> searchAttribute(String listName) {
+        attributes.clear();
 
-		int id;
-		int attId;
-		String value;
-		int itemId;
+        int id;
+        int listId;
+        String name;
+        try {
+            int idList = searchList(listName);
+            PreparedStatement prepStat = con.prepareStatement("select * from attribute where list_id = ? order by id asc");
+            prepStat.setInt(1, idList);
+            ResultSet rs = prepStat.executeQuery();
 
-		PreparedStatement prepStat = con
-				.prepareStatement("select * from item where att_id =? group by item_id order by item_id asc");
-		prepStat.setInt(1, sattId);
+            while (rs.next()) {
+                id = rs.getInt("id");
+                listId = rs.getInt("list_id");
+                name = rs.getString("name");
 
-		ResultSet rs = prepStat.executeQuery();
+                Attribute att = new Attribute(id, listId, name);
+                attributes.add(att);
+            }
+            prepStat.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return attributes;
+    }
 
-		while (rs.next()) {
-			id = rs.getInt("id");
-			attId = rs.getInt("att_id");
-			value = rs.getString("value");
-			itemId = rs.getInt("item_id");
-			Item item = new Item(id, attId, value, itemId);
-			items.add(item);
-		}
-		prepStat.close();
-		rs.close();
+    public ArrayList<Item> searchRow(int sItemId) {
+        items.clear();
 
-		return items;
-	}
+        int id;
+        int attId;
+        String value;
+        int itemId;
 
-	public ArrayList<Attribute> searchAttribute(int idOfList) throws SQLException {
-		attributes.clear();
+        try {
+            PreparedStatement prepStat = con.prepareStatement("select * from item where item_id =?");
+            prepStat.setInt(1, sItemId);
+            ResultSet rs = prepStat.executeQuery();
 
-		int id;
-		int listId;
-		String name;
+            while (rs.next()) {
+                id = rs.getInt("id");
+                attId = rs.getInt("att_id");
+                value = rs.getString("value");
+                itemId = rs.getInt("item_id");
+                Item item = new Item(id, attId, value, itemId);
+                items.add(item);
+            }
+            prepStat.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
 
-		PreparedStatement prepStat = con.prepareStatement("select * from attribute where list_id = ? order by id asc");
-		prepStat.setInt(1, idOfList);
-		ResultSet rs = prepStat.executeQuery();
+    }
 
-		while (rs.next()) {
-			id = rs.getInt("id");
-			listId = rs.getInt("list_id");
-			name = rs.getString("name");
+    public ArrayList<Integer> searchItemIds(int attId) {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        int itemId;
 
-			Attribute att = new Attribute(id, listId, name);
-			attributes.add(att);
-		}
-		System.out.println(attributes.size());
-		prepStat.close();
-		rs.close();
-		return attributes;
-	}
+        try {
+            PreparedStatement prepStat = con
+                    .prepareStatement("select item_id from item where att_id = ? group by item_id order by item_id asc");
+            prepStat.setInt(1, attId);
+            ResultSet rs = prepStat.executeQuery();
 
-	public ArrayList<Item> getRow(int sItemId) throws SQLException {
-		items.clear();
+            while (rs.next()) {
+                itemId = rs.getInt("item_id");
+                result.add(itemId);
+            }
+            prepStat.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
 
-		int id;
-		int attId;
-		String value;
-		int itemId;
+    }
 
-		PreparedStatement prepStat = con.prepareStatement("select * from item where item_id =?");
-		prepStat.setInt(1, sItemId);
-		ResultSet rs = prepStat.executeQuery();
+    public int readItemId() {
+        int itemId = 0;
+        try {
 
-		while (rs.next()) {
-			id = rs.getInt("id");
-			attId = rs.getInt("att_id");
-			value = rs.getString("value");
-			itemId = rs.getInt("item_id");
-			Item item = new Item(id, attId, value, itemId);
-			items.add(item);
-		}
-		prepStat.close();
-		rs.close();
+            PreparedStatement prepStat = con.prepareStatement("select max(item_id) from item;");
+            ResultSet rs = prepStat.executeQuery();
 
-		return items;
+            if (!rs.next()) {
+                return 0;
+            } else {
+                do {
+                    itemId = rs.getInt("max(item_id)");
+                } while (rs.next());
 
-	}
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return itemId;
+    }
 
-	public ArrayList<Integer> searchItemIds(int attId) throws SQLException {
-		ArrayList<Integer> result = new ArrayList<Integer>();
-		int itemId;
+    public void removeAttribute(String name, String listName) {
+        try {
+            int listId = searchList(listName);
+            if (listId != 0) {
+                PreparedStatement prepStat = con.prepareStatement("delete from attribute where list_id = ? and name = ? ");
+                prepStat.setInt(1, listId);
+                prepStat.setString(2, name);
+                prepStat.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
-		PreparedStatement prepStat = con
-				.prepareStatement("select item_id from item where att_id = ? group by item_id order by item_id asc");
-		prepStat.setInt(1, attId);
-		ResultSet rs = prepStat.executeQuery();
+    public void removeItem(int itemId) {
+        try {
+            PreparedStatement prepStat = con.prepareStatement("delete from item where item_id = ?;");
+            prepStat.setInt(1, itemId);
+            prepStat.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
-		while (rs.next()) {
-			itemId = rs.getInt("item_id");
-			result.add(itemId);
-		}
-		prepStat.close();
-		rs.close();
-		return result;
-	}
+    public void removeList(String listName) {
+        try {
+            PreparedStatement prepStat = con.prepareStatement("delete from list where name = ?");
+            prepStat.setString(1, listName);
+            prepStat.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public int readItemId() throws SQLException {
-		int itemId;
-		PreparedStatement prepStat = con.prepareStatement("select max(item_id) from item;");
-		ResultSet rs = prepStat.executeQuery();
 
-		if (!rs.next()) {
-			System.out.println("false");
-			return 0;
-		} else {
-			do {
-				itemId = rs.getInt("max(item_id)");
-				System.out.println("id is: " + itemId);
-			} while (rs.next());
+    public void updateItem(int itemId, ArrayList<Item> tempItem) {
+        int attId = 0;
+        String value = "";
+        PreparedStatement prepStat;
+        int rs;
+        try {
+            for (int i = 0; i < tempItem.size(); i++) {
+                attId = tempItem.get(i).getAttId();
+                value = tempItem.get(i).getValue();
+                prepStat = con.prepareStatement("update item SET value = ? where item_id = ? and att_id = ?");
+                prepStat.setString(1, value);
+                prepStat.setInt(2, itemId);
+                prepStat.setInt(3, attId);
+                rs = prepStat.executeUpdate();
 
-		}
-		return itemId;
-	}
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

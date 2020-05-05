@@ -1,12 +1,12 @@
 package com.any.store.application;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-
 import com.any.store.model.Attribute;
 import com.any.store.model.Database;
 import com.any.store.model.Item;
 import com.any.store.model.List;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class TestDatabase {
 	public static void main(String[] args) throws SQLException {
@@ -37,7 +37,7 @@ public class TestDatabase {
 		}
 		System.out.println();
 
-		atts = db.searchAttribute(1);
+		//atts = db.searchAttribute(1);
 		for (int i = 0; i < atts.size(); i++) {
 			atts.get(i).print();
 		}
@@ -54,7 +54,7 @@ public class TestDatabase {
 		
 		System.out.println();
 		items.clear();
-		items = db.getRow(2);
+		items = db.searchRow(2);
 		for (int i = 0; i < items.size(); i++) {
 			items.get(i).print();
 		}
