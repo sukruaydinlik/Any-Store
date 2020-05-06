@@ -67,11 +67,10 @@ public class Controller {
     }
 
     public String[] getList() {
-        String[] result = null;
-        result = new String[db.readLists().size()];
+        String[] result = new String[db.readLists().size()];
         for (int i = 0; i < db.readLists().size(); i++) {
             result[i] = db.readLists().get(i).getName();
-
+            System.out.println("reading item: "+result[i]);
         }
 
         return result;

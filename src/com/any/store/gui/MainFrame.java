@@ -8,6 +8,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -77,7 +78,6 @@ public class MainFrame extends JFrame {
         setBackground(new Color(1, 198, 83));
         setBounds(new Rectangle(100, 100, 0, 0));
 
-
         setListeners();
 
         layoutMenuPanel();
@@ -146,8 +146,8 @@ public class MainFrame extends JFrame {
                 return false;
             }
         };
-        mainTable.setModel(tableModel);
 
+        mainTable.setModel(tableModel);
         mainTable.setGridColor(new Color(255, 255, 255));
         mainTable.setInheritsPopupMenu(true);
         mainTable.setRowHeight(22);
@@ -185,7 +185,7 @@ public class MainFrame extends JFrame {
         instrumentPanel.setPreferredSize(new Dimension(300, 482));
         instrumentPanel.setLayout(new GridBagLayout());
 
-        // set logo
+        // set and add logo
         logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         logoLabel.setIcon(new ImageIcon(getClass().getResource("/com/any/store/icons/logo_file[313].png"))); // NOI18N
         logoLabel.setVerticalAlignment(SwingConstants.TOP);
@@ -218,7 +218,7 @@ public class MainFrame extends JFrame {
         listList.setSelectionBackground(new Color(1, 198, 83));
         listList.setBackground(new Color(69, 73, 74));
         listList.setForeground(new Color(226, 226, 226));
-        listList.setFixedCellHeight(25);
+        //listList.setFixedCellHeight(25);
         listList.addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -229,6 +229,7 @@ public class MainFrame extends JFrame {
                 mainTable.updateUI();
 
             }
+
         });
 
         listJSP.setViewportView(listList);
@@ -407,14 +408,15 @@ public class MainFrame extends JFrame {
     }
 
     private void deleteListBtnActionPerformed(ActionEvent evt) {
-        int choice = JOptionPane.showConfirmDialog(this, "Are you sure to delete this list?");
-        String listName = listList.getSelectedValue();
+        String listName = listList.isSelectionEmpty() ? "" : listList.getSelectedValue();
         //System.out.println(choice);
-        if (!listName.equals("") && choice == 0) {
-            cnt.deleteList(listName);
+        if (!listName.equals("")) {
+            int choice = JOptionPane.showConfirmDialog(this, "Are you sure to delete this list?");
+            if (choice == 0) {
+                cnt.deleteList(listName);
+            }
         }
         refresh();
-
     }
 
     private void deleteItemBtnActionPerformed(ActionEvent evt) {
@@ -435,12 +437,13 @@ public class MainFrame extends JFrame {
     private void editListBtnActionPerformed(ActionEvent evt) {
 
 
-        String listName = listList.getSelectedValue();
-        if (!listName.equals("")) {
+        String listName = listList.isSelectionEmpty() ? "" : listList.getSelectedValue();
+        if (!listName.isEmpty()) {
             //listFrame = new ListFrame(cnt.findAttributes(listName),listName);
             listFrame = new ListFrame(cnt.findAttributes(listName), listName);
             listFrame.setListener(listListener);
         }
+
         refresh();
     }
 
@@ -482,11 +485,11 @@ public class MainFrame extends JFrame {
 
     private void addListBtnActionPerformed(ActionEvent evt) {
         String listName = listList.getSelectedValue();
-        if (!listName.equals("")) {
-            //listFrame = new ListFrame(cnt.findAttributes(listName),listName);
-            listFrame = new ListFrame();
-            listFrame.setListener(listListener);
-        }
+//        if (!listName.equals("")) {
+        //listFrame = new ListFrame(cnt.findAttributes(listName),listName);
+        listFrame = new ListFrame();
+        listFrame.setListener(listListener);
+        //    }
         refresh();
     }
 
@@ -505,7 +508,7 @@ public class MainFrame extends JFrame {
     }
 
     private void searchFieldFocusGained(FocusEvent evt) {
-        if(searchField.getText().equals("search...")) {
+        if (searchField.getText().equals("search...")) {
 
             searchField.setText("");
             refresh();
@@ -513,27 +516,32 @@ public class MainFrame extends JFrame {
     }
 
     private void searchFieldFocusLost(FocusEvent evt) {
-        if(searchField.getText().equals("")) {
+        if (searchField.getText().equals("")) {
             searchField.setText("search...");
             filterTable("");
             refresh();
         }
     }
 
-    public void filterTable(String filter){
+    public void filterTable(String filter) {
         TableRowSorter<DefaultTableModel> trs = new TableRowSorter<DefaultTableModel>(tableModel);
         mainTable.setRowSorter(trs);
         trs.setRowFilter(RowFilter.regexFilter("(?i)" + filter));
     }
 
     public void refresh() {
+
         cnt.fillTable(listList.getSelectedValue(), tableModel, mainTable);
         mainTable.repaint();
         mainTable.revalidate();
+        mainTable.updateUI();
 
         list = cnt.getList();
+        //listModel.notifyAll();
+        listList.setModel(listModel);
         listList.repaint();
         listList.revalidate();
+        listList.updateUI();
     }
 
 }

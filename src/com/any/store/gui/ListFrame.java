@@ -253,6 +253,7 @@ public class ListFrame extends JFrame {
             listModel.addElement(propertyField.getText());
             deletePropButton.setEnabled(true);
         }
+        propertyField.setText("");
         listList.setSelectedIndex(0);
     }
 

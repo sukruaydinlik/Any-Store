@@ -143,6 +143,7 @@ public class ItemFrame extends JFrame {
             itemPanel.add(label, gbc);
         }
 
+        // Set position of the textfields
         gbc.gridx = 3;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.LINE_START;
@@ -222,14 +223,15 @@ public class ItemFrame extends JFrame {
             if (itemListener != null) {
                 itemListener.editEventOccured(ie);
             }
-            this.dispose();
         }
+        this.dispose();
+
     }
 
 
     private void setTextFieldData(JTextField textField, int i) {
         String value = item.get(i);
-        if (!value.equals("")) {
+        if (value.equals("")) {
             value = "";
         }
         textField.setText(value);
