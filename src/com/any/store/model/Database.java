@@ -24,12 +24,12 @@ public class Database {
             this.isConnected = false;
             e.printStackTrace();
         }
-        if (isConnected) {
-            System.out.println("Connection successfull!");
-        } else {
-
-            System.out.println("Connection error");
-        }
+//        if (isConnected) {
+//            System.out.println("Connection successfull!");
+//        } else {
+//
+//            System.out.println("Connection error");
+//        }
 
         initialize();
 
@@ -337,11 +337,31 @@ public class Database {
         try {
             int listId = searchList(listName);
             if (listId != 0) {
+
+                for (int i = 0; i < searchAttribute(listName).size(); i++) {
+                    if (searchAttribute(listName).get(i).getName().equals(name)){
+
+                        cleanItem(searchAttribute(listName).get(i).getId());
+                    }
+                }
                 PreparedStatement prepStat = con.prepareStatement("delete from attribute where list_id = ? and name = ? ");
                 prepStat.setInt(1, listId);
                 prepStat.setString(2, name);
                 prepStat.executeUpdate();
+
+
+
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void cleanItem(int id) {
+        try {
+            PreparedStatement prepStat = con.prepareStatement("delete from item where att_id = ?;");
+            prepStat.setInt(1, id);
+            prepStat.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -359,6 +379,12 @@ public class Database {
 
     public void removeList(String listName) {
         try {
+            attributes.clear();
+            int id = searchList(listName);
+            attributes = searchAttribute(listName);
+            for (int i = 0; i < attributes.size(); i++) {
+                removeAttribute(attributes.get(i).getName(),listName);
+            }
             PreparedStatement prepStat = con.prepareStatement("delete from list where name = ?");
             prepStat.setString(1, listName);
             prepStat.executeUpdate();

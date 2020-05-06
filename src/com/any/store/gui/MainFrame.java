@@ -80,8 +80,8 @@ public class MainFrame extends JFrame {
 
         setListeners();
 
-        layoutMenuPanel();
         layoutTablePanel();
+        layoutMenuPanel();
         layoutInstrumentPanel();
 
         getContentPane().add(tablePanel, BorderLayout.CENTER);
@@ -409,7 +409,6 @@ public class MainFrame extends JFrame {
 
     private void deleteListBtnActionPerformed(ActionEvent evt) {
         String listName = listList.isSelectionEmpty() ? "" : listList.getSelectedValue();
-        //System.out.println(choice);
         if (!listName.equals("")) {
             int choice = JOptionPane.showConfirmDialog(this, "Are you sure to delete this list?");
             if (choice == 0) {
@@ -428,7 +427,7 @@ public class MainFrame extends JFrame {
             cnt.fillTable(listList.getSelectedValue(), tableModel, mainTable);
             cnt.refresh();
         } else {
-            System.out.println("Select row please!");
+            //System.out.println("Select row please!");
         }
         refresh();
     }
@@ -458,7 +457,7 @@ public class MainFrame extends JFrame {
         // -1 means no row selected
         if (row != -1) {
 
-            System.out.println(item.size());
+            //System.out.println(item.size());
             colCount = mainTable.getModel().getColumnCount();
 
             for (int i = 0; i < colCount - 1; i++) {
@@ -478,7 +477,7 @@ public class MainFrame extends JFrame {
             itemFrame.setItemListener(itemListener);
             cnt.refresh();
         } else {
-            System.out.println("Select row please!");
+            //System.out.println("Select row please!");
         }
         refresh();
     }

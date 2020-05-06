@@ -70,7 +70,7 @@ public class Controller {
         String[] result = new String[db.readLists().size()];
         for (int i = 0; i < db.readLists().size(); i++) {
             result[i] = db.readLists().get(i).getName();
-            System.out.println("reading item: "+result[i]);
+            //System.out.println("reading item: "+result[i]);
         }
 
         return result;
@@ -139,9 +139,9 @@ public class Controller {
         }
         //if not in remaining, then delete
         for (int i = 0; i < olds.size(); i++) {
-            System.out.println(olds.get(i));
+            //System.out.println(olds.get(i));
             if (!newAtts.contains(olds.get(i))) {
-                System.out.println("removing attribute " + olds.get(i));
+                //.out.println("removing attribute " + olds.get(i));
                 db.removeAttribute(olds.get(i), listName);
             }
         }

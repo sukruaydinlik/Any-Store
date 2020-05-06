@@ -92,9 +92,9 @@ public class ListFrame extends JFrame {
             for (int i = 0; i < atts.size(); i++) {
                 listModel.addElement(atts.get(i));
             }
-            System.out.println("added attributes to the list model");
+            //System.out.println("added attributes to the list model");
         } else {
-            System.out.println("in else");
+            //System.out.println("in else");
         }
 
 
@@ -248,7 +248,7 @@ public class ListFrame extends JFrame {
         String property = propertyField.getText();
 
         if (property.equals("") || listModel.contains(property)) {
-            System.out.println("Item is already in the list or empty");
+            //System.out.println("Item is already in the list or empty");
         } else {
             listModel.addElement(propertyField.getText());
             deletePropButton.setEnabled(true);
