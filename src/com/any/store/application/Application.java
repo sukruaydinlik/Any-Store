@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 public class Application {
 	
     public static void main(String args[]) {
-    	
+
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {

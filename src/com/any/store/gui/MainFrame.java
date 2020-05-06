@@ -46,6 +46,12 @@ public class MainFrame extends JFrame {
     private ItemListener itemListener;
 
     public MainFrame() {
+
+        java.net.URL url = ClassLoader.getSystemResource("com\\any\\store\\icons\\logo_file[313]2.png");
+        Toolkit kit = Toolkit.getDefaultToolkit();
+        Image img = kit.createImage(url);
+        this.setIconImage(img);
+
         initComponents();
     }
 
